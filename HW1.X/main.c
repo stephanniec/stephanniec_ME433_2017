@@ -55,21 +55,26 @@ int main() {
     DDPCONbits.JTAGEN = 0;
 
     // do your TRIS and LAT commands here
+    TRISBbits.TRISB4 = 1; // set pin 11 = RB4 as input
     TRISAbits.TRISA4 = 0; // set pin 12 = RA4 as output
-    LATAbits.LATA4 = 0; // start with green LED off by default
+    LATAbits.LATA4 = 0; // start with red LED off by default
     
     __builtin_enable_interrupts();
 
     while(1) {
-        _CP0_SET_COUNT(0);
-                
-        while(_CP0_GET_COUNT()< DURATION ){
-            ;// do nothing
+       
+        if(!PORTBbits.RB4) {
+            LATAbits.LATA4 = 0; //if button pressed, turn red LED off
         }
-        LATAINV = 0b10000; //invert pin RA4
-     
-	    // use _CP0_SET_COUNT(0) and _CP0_GET_COUNT() to test the PIC timing
-		  // remember the core timer runs at half the CPU speed
-    }
+        
+        else {
+            _CP0_SET_COUNT(0);
+                
+            while(_CP0_GET_COUNT()< DURATION ){
+                ;// do nothing
+            }
+            LATAINV = 0b10000; //invert pin RA4
+        }
+    }// end infinite while
     
 }
