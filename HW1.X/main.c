@@ -62,6 +62,7 @@ int main() {
     __builtin_enable_interrupts();
 
     while(1) {
+<<<<<<< HEAD
        
         if(!PORTBbits.RB4) {
             LATAbits.LATA4 = 0; //if button pressed, turn red LED off
@@ -69,12 +70,23 @@ int main() {
         
         else {
             _CP0_SET_COUNT(0);
+=======
+        _CP0_SET_COUNT(0);
+>>>>>>> dcf2e63a3b89679534971d79710343208a5d95cb
                 
             while(_CP0_GET_COUNT()< DURATION ){
                 ;// do nothing
             }
             LATAINV = 0b10000; //invert pin RA4
         }
+<<<<<<< HEAD
     }// end infinite while
+=======
+        LATAINV = 0b10000; //invert pin RA4
+     
+	    // use _CP0_SET_COUNT(0) and _CP0_GET_COUNT() to test the PIC timing
+		  // remember the core timer runs at half the CPU speed
+    }
+>>>>>>> dcf2e63a3b89679534971d79710343208a5d95cb
     
 }
