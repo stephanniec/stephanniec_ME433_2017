@@ -64,7 +64,7 @@ int main() {
     while(1) {
        
         if(!PORTBbits.RB4) {
-            LATAbits.LATA4 = 0; //if button pressed, turn red LED off
+            LATAbits.LATA4 = 0; // if button pressed, turn red LED off
         }
         
         else {
@@ -73,10 +73,9 @@ int main() {
             while(_CP0_GET_COUNT()< DURATION ){
                 ;// do nothing
             }
-            LATAINV = 0b10000; //invert pin RA4
+            LATAINV = 0b10000; // invert pin RA4
         }
+        
     }// end infinite while
-
-        LATAINV = 0b10000; //invert pin RA4
     
 }
