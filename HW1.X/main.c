@@ -17,7 +17,7 @@
 #pragma config OSCIOFNC = OFF // free up secondary osc pins
 #pragma config FPBDIV = DIV_1 // divide CPU freq by 1 for peripheral bus clock
 #pragma config FCKSM = CSDCMD // do not enable clock switch
-#pragma config WDTPS = PS1048576 // slowest wdt, biggest?
+#pragma config WDTPS = PS1 // slowest wdt
 #pragma config WINDIS = OFF // no wdt window
 #pragma config FWDTEN = OFF // wdt off by default
 #pragma config FWDTWINSZ = WINSZ_25 // wdt window at 25%
@@ -61,12 +61,12 @@ int main() {
     __builtin_enable_interrupts();
 
     while(1) {
-        _CP0_SET_COUNT(0)
+        _CP0_SET_COUNT(0);
                 
         while(_CP0_GET_COUNT()< DURATION ){
             ;// do nothing
         }
-        LATAINV = 0b00001 //invert pin RA4
+        LATAINV = 0b10000; //invert pin RA4
      
 	    // use _CP0_SET_COUNT(0) and _CP0_GET_COUNT() to test the PIC timing
 		  // remember the core timer runs at half the CPU speed
