@@ -8,3 +8,7 @@ This repository contains scripts for various mechatronics projects completed for
 <b>HW1:</b><br>
 * pic32mx250f128b microcontroller breadboard circuit<br>
 * Circuit validation code which toggles an LED on and off
+
+<b>HW2:</b><br>
+* Custom pic32mx250f128b Eagle library
+* pic32mx250f128b PCB schematic
