@@ -12,3 +12,10 @@ This repository contains scripts for various mechatronics projects completed for
 <b>HW2:</b><br>
 * Custom pic32mx250f128b Eagle library
 * pic32mx250f128b PCB schematic
+
+<b>HW3:</b><br>
+* PCB .brd Eagle file
+* Compressed PCB Gerber files
+
+Current design in Eagle
+![Board](https://github.com/stephanniec/stephanniec_ME433_2017/imgs/pcb.png)
