@@ -17,5 +17,5 @@ This repository contains scripts for various mechatronics projects completed for
 * PCB .brd Eagle file
 * Compressed PCB Gerber files
 
-Current design in Eagle
+Current design in Eagle<br>
 ![Board](https://github.com/stephanniec/stephanniec_ME433_2017/blob/master/imgs/pcb.png)
