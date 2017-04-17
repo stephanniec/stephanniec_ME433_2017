@@ -31,12 +31,13 @@ char spi_io(unsigned char c){
 
 void write(unsigned int channel, unsigned int voltage){
     unsigned int b1 = 0, b2 = 0; //bytes 1 and 2
-    CS = 1;
     
     channel = (channel<<3 | 0b0111); //0b#111 
     b1 = (channel<<4 | voltage>>4); //#111 0000, 0000 #### = #111 ####
-    spi_io(b1);
     b2 = voltage<<4; //#### 0000
+    
+    CS = 0; //Telling slave that I'm ready to send stuff
+    spi_io(b1);
     spi_io(b2);
-
+    CS = 1; //Sending finished
 }

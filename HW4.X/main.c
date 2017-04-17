@@ -74,7 +74,6 @@ int main() {
             
     int j = 0; // Counter
     while(1) {
-        CS = 0;
         _CP0_SET_COUNT(0);
         while(_CP0_GET_COUNT() < 48000000/2/1000){
             ;
