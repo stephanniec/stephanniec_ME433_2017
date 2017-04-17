@@ -4,7 +4,8 @@
 void spi_init(void){
     SPI1CON = 0;
     SPI1BUF;                 // clear rx buffer
-    SPI1BRG = 0x1000;        // baud rate compatible with nScope
+    SPI1BRG = 1;
+    //0x1000;        // baud rate compatible with nScope
     SPI1STATbits.SPIROV = 0; // clear overflow bit
     SPI1CONbits.CKE = 1;     // change voltage output when clk active -> idle
     SPI1CONbits.CKP = 0;     // clk active when high

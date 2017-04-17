@@ -58,39 +58,46 @@ int main() {
     spi_init();
     
     // Build sine and ramp waves
-    unsigned int sine_wave[200];
+    unsigned int sine_wave[100];
     unsigned int ramp_wave[200];
-    double tmp;
-    int i;
+    double s_tmp, r_tmp;
+    int i,j;
     
-    for(i=0; i<200; i++){
-        tmp = (255.0/2.0) + (255.0/2.0)*sin(2*M_PI*(i/200.0));
-        sine_wave[i] = tmp;
-        tmp = (i/200.0)*255.0;
-        ramp_wave[i] = tmp;
+    for(i=0; i<100; i++){ //10Hz sine wave
+        s_tmp = (255.0/2.0) + (255.0/2.0)*sin(2*M_PI*(i/100.0));
+        sine_wave[i] = s_tmp;
     }
    
+    for(j=0; j<200; j++){ //5Hz triangle wave
+        r_tmp = (j/200.0)*255.0;
+        ramp_wave[j] = r_tmp;
+    }
+    
     __builtin_enable_interrupts();
             
-    int j = 0; // Counter
+    int k = 0, l = 0; // Counters
     while(1) {
         _CP0_SET_COUNT(0);
         while(_CP0_GET_COUNT() < 48000000/2/1000){
             ;
         }
         // Write sine wave to DAC A
-        write(A, sine_wave[j]);
+        write(A, sine_wave[k]);
         
         // Write ramp wave to DAC B
-        write(B, ramp_wave[j]);
+        write(B, ramp_wave[l]);
         
-        j++;
+        k++;
+        l++;
         
         //Reset list index
-        if (j == 200){
-            j = 0;
+        if (k == 100){
+            k = 0;
         }
-
+        if (l == 200){
+            l = 0;
+        }
+        
     }// end infinite while
     
 }// end main
