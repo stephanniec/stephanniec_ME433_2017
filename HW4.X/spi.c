@@ -23,7 +23,7 @@ void spi_init(void){
 //Sends a byte using SPI and returns the response
 char spi_io(unsigned char c){
     SPI1BUF = c;
-    while(!SPI1STATbits.SPITBF){
+    while(!SPI1STATbits.SPIRBF){
         ;
     }
     return SPI1BUF;
