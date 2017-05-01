@@ -23,3 +23,7 @@ Current design in Eagle<br>
 #### HW4:<br>
 * SPI communication with an MCP4902 DAC chip
 * Code tells the DAC to output a 10Hz sine wave and 5Hz triangle wave
+
+#### HW5:<br>
+* I2C communication with an MCP23008 chip
+* Code tells the chip to turn off a yellow LED when a button hooked up to GP7 is pressed

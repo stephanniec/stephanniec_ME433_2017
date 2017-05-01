@@ -54,7 +54,7 @@ void i2c_master_stop(void) {          // send a STOP:
 
 void init_expander(){
     //Set GP0-3 as outputs and GP4-7 as inputs
-    set_expander(0x00, 0xF0); //Sending 0b11110000 
+    set_expander(0x00, 0xF0); //Sending 0b11110000 to IODIR register
 }
 
 void set_expander(unsigned char address, unsigned char val){
