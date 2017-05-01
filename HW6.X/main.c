@@ -61,13 +61,22 @@ int main() {
     
     __builtin_enable_interrupts();
     LCD_clearScreen(BLACK);
-    char message[10];
+    char message1[20];
+    char message2[20];
+    char message3[20];
+    char message4[20];
+    sprintf(message1, "   ..::::::::.");
+    sprintf(message2,"  :::::::::::::");
+    sprintf(message3," /. `:::::::::::");
+    sprintf(message4,"o__,_||||||||||'");
+    draw_string(message1,25,20,CYAN,BLACK);
+    draw_string(message2,25,30,CYAN,BLACK);
+    draw_string(message3,25,40,CYAN,BLACK);
+    draw_string(message4,25,50,CYAN,BLACK);    
     
-    draw_char('A',50,50,CYAN,BLACK);
+    while(1) {
+        
+        
+    }// end infinite while
     
-//    while(1) {
-//        
-//        
-//    }// end infinite while
-//    
 }// end main
