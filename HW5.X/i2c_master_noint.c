@@ -10,9 +10,9 @@ void i2c_master_setup(void) {
     ANSELBbits.ANSB2 = 0;   // Turn off analog for P32 pin B2
     ANSELBbits.ANSB3 = 0;   // Turn off analog for P32 pin B3
             
-    I2C2BRG = 233;      // I2CBRG = [1/(2*Fsck) - PGD]*Pblck - 2 
-                            // Fsck = 100kHz, PGD = , Pblck = 80MHz
-    I2C2CONbits.ON = 1;               // turn on the I2C2 module
+    I2C2BRG = 233;          // I2CBRG = [1/(2*Fsck) - PGD]*Pblck - 2 
+                            // Fsck = 100kHz, PGD = 104ns, Pblck = 48MHz
+    I2C2CONbits.ON = 1;     // turn on the I2C2 module
 }
 
 // Start a transmission on the I2C bus
@@ -48,8 +48,8 @@ void i2c_master_ack(int val) {        // sends ACK = 0 (slave should send anothe
 }
 
 void i2c_master_stop(void) {          // send a STOP:
-    I2C2CONbits.PEN = 1;                // comm is complete and master relinquishes bus
-    while(I2C2CONbits.PEN) { ; }        // wait for STOP to complete
+    I2C2CONbits.PEN = 1;              // comm is complete and master relinquishes bus
+    while(I2C2CONbits.PEN) { ; }      // wait for STOP to complete
 }
 
 void init_expander(){
