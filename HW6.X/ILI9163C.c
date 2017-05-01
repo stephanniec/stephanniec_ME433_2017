@@ -190,25 +190,37 @@ void LCD_clearScreen(unsigned short color) {
 		}
 }
 
-void draw_byte(unsigned int byte, unsigned short x, unsigned short y, unsigned short color1, unsigned short color2){
+void draw_byte(unsigned int byte, unsigned short row, unsigned short col, unsigned short color1, unsigned short color2){
     int i;
-    for (i=0;i<7;i++){
-        
+    for (i=0;i<8;i++){// 8 pixels per column
+        if(col+i<128 && col>0){// check if pixel exists
+            if(byte >> i & 1){// fill pixel desired color
+                LCD_drawPixel(row, col+i, color1);
+            }
+            else{// fill pixel with background color
+                LCD_drawPixel(row, col+i, color2);
+            }
+        }
     }
     
 }
 
-void draw_char(char c, unsigned short x, unsigned short y, unsigned short color1, unsigned short color2){
-    char c_ind = c-0x20; // Index of char in ASCII table array
+void draw_char(char c, unsigned short x0, unsigned short y0, unsigned short color1, unsigned short color2){
+    char c_ind = c-0x20; // Index of 5x8 pixel char in ASCII array
     int i;
     
-    for(i=0;i<4;i++){ // Loop through for each byte
-        if ((x+i) < 128 && x>0){ // Check if row exists
-            draw_byte(ASCII[c_ind][i], x+i, y, color1, color2);
+    for(i=0;i<5;i++){ // 5 pixels per row
+        if ((x0+i) < 128 && x0>0){ // Check if row exists
+            draw_byte(ASCII[c_ind][i], x0+i, y0, color1, color2); 
         }
     }
 }
 
 void draw_string(char* msg, unsigned short x, unsigned short y, unsigned short color1, unsigned short color2){
-    
+    int i = 0;
+    while (msg[i]!=0){
+        draw_char(msg[i], x, y, color1, color2);
+        i++;
+        x+=5; // Set start position to top left pixel of new char
+    }
 }

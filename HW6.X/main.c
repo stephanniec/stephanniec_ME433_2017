@@ -1,6 +1,7 @@
 #include<xc.h>           // processor SFR definitions
 #include<sys/attribs.h>  // __ISR macro
 #include<math.h>
+#include<stdio.h>
 #include "ILI9163C.h"
 
 // DEVCFG0
@@ -54,13 +55,19 @@ int main() {
     // disable JTAG to get pins back
     DDPCONbits.JTAGEN = 0;
     
-    // spi initialization
+    // initializations
+    SPI1_init();
+    LCD_init();
     
     __builtin_enable_interrupts();
-            
-    while(1) {
-        
-        
-    }// end infinite while
+    LCD_clearScreen(BLACK);
+    char message[10];
     
+    draw_char('A',50,50,CYAN,BLACK);
+    
+//    while(1) {
+//        
+//        
+//    }// end infinite while
+//    
 }// end main
