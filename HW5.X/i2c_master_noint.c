@@ -1,5 +1,5 @@
 #include<proc/p32mx250f128b.h>
-#include"i2c_master_noint.h"
+#include"i2c_master_noint.h" 
 
 // I2C Master utilities, 100 kHz, using polling rather than interrupts
 // The functions must be callled in the correct order as per the I2C protocol
@@ -10,8 +10,8 @@ void i2c_master_setup(void) {
     ANSELBbits.ANSB2 = 0;   // Turn off analog for P32 pin B2
     ANSELBbits.ANSB3 = 0;   // Turn off analog for P32 pin B3
             
-    I2C2BRG =  100kHz;   // I2CBRG = [1/(2*Fsck) - PGD]*Pblck - 2 
-                                    // look up PGD for your PIC32
+    I2C2BRG = 233;      // I2CBRG = [1/(2*Fsck) - PGD]*Pblck - 2 
+                            // Fsck = 100kHz, PGD = , Pblck = 80MHz
     I2C2CONbits.ON = 1;               // turn on the I2C2 module
 }
 
@@ -50,4 +50,32 @@ void i2c_master_ack(int val) {        // sends ACK = 0 (slave should send anothe
 void i2c_master_stop(void) {          // send a STOP:
     I2C2CONbits.PEN = 1;                // comm is complete and master relinquishes bus
     while(I2C2CONbits.PEN) { ; }        // wait for STOP to complete
+}
+
+void init_expander(){
+    //Set GP0-3 as outputs and GP4-7 as inputs
+    set_expander(0x00, 0xF0); //Sending 0b11110000 
+}
+
+void set_expander(unsigned char address, unsigned char val){
+    //opcode = 0100 0000 for write, opcode = 0100 0001 for read
+    i2c_master_start();
+    i2c_master_send(SLAVE_ADDR << 1); //device opcode write mode
+    i2c_master_send(address);         //specify register address 
+    i2c_master_send(val);             //data to slave
+    i2c_master_stop();
+}
+
+unsigned char get_expander(unsigned char address){
+    i2c_master_start();
+    i2c_master_send(SLAVE_ADDR << 1);  //writing
+    i2c_master_send(address);          //specifying register address
+    i2c_master_restart();   
+    
+    i2c_master_send((SLAVE_ADDR << 1) | 1); //reading from register
+    char info = i2c_master_recv();    //storing byte read into pic 
+    i2c_master_ack(1);                //let slave know read successful
+    i2c_master_stop();
+    
+    return info;
 }

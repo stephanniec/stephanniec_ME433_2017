@@ -1,6 +1,7 @@
 #include<xc.h>           // processor SFR definitions
 #include<sys/attribs.h>  // __ISR macro
 #include<math.h>
+#include"i2c_master_noint.h"
 
 // DEVCFG0
 #pragma config DEBUG = OFF // no debugging
@@ -53,24 +54,20 @@ int main() {
     // disable JTAG to get pins back
     DDPCONbits.JTAGEN = 0;
 
-    // initial pin setup
+    // i2c setup functions
     i2c_master_setup();
+    init_expander();  
     
     __builtin_enable_interrupts();
 
     while(1) {
        
-        if(!PORTBbits.RB4) {
-            LATAbits.LATA4 = 0; // if button pressed, turn red LED off
+        if(get_expander(0x09) >> 7) { //GPIO = PORT, check if GP7 high
+            set_expander(0x0A, 0b1); //Tell OLAT to make GP0 high, LED on
         }
         
-        else {
-            _CP0_SET_COUNT(0);
-                
-            while(_CP0_GET_COUNT()< DURATION ){
-                ;// do nothing
-            }
-            LATAINV = 0b10000; // invert pin RA4
+        else { //if GP7 low
+            set_expander(0x0A, 0b0); //Tell OLAT to make GP0 low, LED off
         }
         
     }// end infinite while

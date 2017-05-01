@@ -3,6 +3,8 @@
 // Header file for i2c_master_noint.c
 // helps implement use I2C1 as a master without using interrupts
 
+#define SLAVE_ADDR 0x20 //derived from opcode
+
 void i2c_master_setup(void);              // set up I2C 1 as a master, at 100 kHz
 
 void i2c_master_start(void);              // send a START signal
@@ -12,4 +14,7 @@ unsigned char i2c_master_recv(void);      // receive a byte of data
 void i2c_master_ack(int val);             // send an ACK (0) or NACK (1)
 void i2c_master_stop(void);               // send a stop
 
+void init_expander(void);
+void set_expander(unsigned char);
+unsigned char get_expander(unsigned char);
 #endif
