@@ -60,7 +60,7 @@ int main() {
     LCD_init();
     
     __builtin_enable_interrupts();
-    LCD_clearScreen(BLACK);
+    LCD_clearScreen(YELLOW);
     char hhog1[20];
     char hhog2[20];
     char hhog3[20];
@@ -75,19 +75,19 @@ int main() {
         sprintf(hhog2,"  :::::::::::::");
         sprintf(hhog3," /. `:::::::::::");
         sprintf(hhog4,"o__,_||||||||||'");
-        draw_string(hhog1,25,20,MAGENTA,BLACK);
-        draw_string(hhog2,25,30,MAGENTA,BLACK);
-        draw_string(hhog3,25,40,MAGENTA,BLACK);
-        draw_string(hhog4,25,50,MAGENTA,BLACK);  
+        draw_string(hhog1,25,20,BLUE,YELLOW);
+        draw_string(hhog2,25,30,BLUE,YELLOW);
+        draw_string(hhog3,25,40,BLUE,YELLOW);
+        draw_string(hhog4,25,50,BLUE,YELLOW);  
         
         sprintf(message, "Hello World! %3d", count);
-        draw_string(message,28,90,BLUE,BLACK);
+        draw_string(message,28,90,BLACK,YELLOW);
 
         //draw_bar
-        draw_bar(15,70,100,5,GREEN,RED, count);
+        draw_bar(15,70,100,5,RED,WHITE, count);
         
         sprintf(message, "FPS: %.2f", fps);
-        draw_string(message,28,100,BLUE,BLACK);
+        draw_string(message,28,100,BLACK,YELLOW);
         fps = 24000000./_CP0_GET_COUNT();
         
         while(_CP0_GET_COUNT()<48000000/2/5){//Loop at 5Hz

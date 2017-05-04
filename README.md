@@ -27,3 +27,7 @@ Current design in Eagle<br>
 #### HW5:<br>
 * I2C communication with an MCP23008 chip
 * Code tells the chip to turn off a yellow LED when a button hooked up to GP7 is pressed
+
+#### HW6:<br>
+* TFT LCD display using SPI communication
+* Code prints the image of a hedgehog and "Hello World!" to the screen, draws a progress bar which fills as a counter increases from 0-100, and outputs a live reading of the frames per second rate
