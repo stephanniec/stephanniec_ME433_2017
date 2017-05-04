@@ -61,21 +61,44 @@ int main() {
     
     __builtin_enable_interrupts();
     LCD_clearScreen(BLACK);
-    char message1[20];
-    char message2[20];
-    char message3[20];
-    char message4[20];
-    sprintf(message1, "   ..::::::::.");
-    sprintf(message2,"  :::::::::::::");
-    sprintf(message3," /. `:::::::::::");
-    sprintf(message4,"o__,_||||||||||'");
-    draw_string(message1,25,20,CYAN,BLACK);
-    draw_string(message2,25,30,CYAN,BLACK);
-    draw_string(message3,25,40,CYAN,BLACK);
-    draw_string(message4,25,50,CYAN,BLACK);    
+    char hhog1[20];
+    char hhog2[20];
+    char hhog3[20];
+    char hhog4[20];
+    char message[20];
+    int count = 0;
+    float fps = 0;
     
     while(1) {
+        _CP0_SET_COUNT(0);
+        sprintf(hhog1, "   ..::::::::.");
+        sprintf(hhog2,"  :::::::::::::");
+        sprintf(hhog3," /. `:::::::::::");
+        sprintf(hhog4,"o__,_||||||||||'");
+        draw_string(hhog1,25,20,MAGENTA,BLACK);
+        draw_string(hhog2,25,30,MAGENTA,BLACK);
+        draw_string(hhog3,25,40,MAGENTA,BLACK);
+        draw_string(hhog4,25,50,MAGENTA,BLACK);  
         
+        sprintf(message, "Hello World! %3d", count);
+        draw_string(message,28,90,BLUE,BLACK);
+
+        //draw_bar
+        draw_bar(15,70,100,5,GREEN,RED, count);
+        
+        sprintf(message, "FPS: %.2f", fps);
+        draw_string(message,28,100,BLUE,BLACK);
+        fps = 24000000./_CP0_GET_COUNT();
+        
+        while(_CP0_GET_COUNT()<48000000/2/5){//Loop at 5Hz
+            //USB 2x slower than peripheral
+            ;
+        }
+        count++;
+        
+        if(count == 101 || count == -101){
+            count = 0;
+        } 
         
     }// end infinite while
     

@@ -224,3 +224,42 @@ void draw_string(char* msg, unsigned short x, unsigned short y, unsigned short c
         x+=5; // Set start position to top left pixel of new char
     }
 }
+
+void draw_bar(unsigned short x0, unsigned short y0, unsigned short length, unsigned short height, unsigned short color1, unsigned short color2, int counter){
+    int i,j;
+    unsigned short x_move,y_move,x,y; // pixel coordinates
+    unsigned short l_max, h_max; // absolute value of length and height
+    
+    if(length>=0){
+        x_move = 1;  // positive length -> bar fills left to right
+    }
+    else{
+        x_move = -1; // negative length -> bar fills right to left
+    }
+    if(height>=0){
+        y_move = 1;  // positive height -> pixels drawn top to bottom
+    }
+    else{
+        y_move = -1; // negative height -> pixels drawn bottom to top
+    }
+    
+    l_max = x_move*length+1;
+    h_max = y_move*height+1;
+            
+    for(i=0;i<counter;i++){
+        x = x0 + i*x_move;
+        for(j=0;j<h_max;j++){
+            y = y0+j*y_move;
+            LCD_drawPixel(x,y,color1); // Fill bar with desired color
+        }
+    }
+    
+    for(i=counter;i<l_max;i++){
+        x = x0+i*x_move;
+        for(j=0;j<h_max;j++){
+            y = y0+j*y_move;
+            LCD_drawPixel(x,y,color2); // Fill bar with bg color
+        }
+    }
+        
+}
