@@ -63,14 +63,43 @@ int main() {
     init_expander(); // Turn on accelerometer
     
     __builtin_enable_interrupts();
-    char msg[100];    
+    char msg[100];
+    int arrlen = 14;
+    unsigned char data[arrlen];
     LCD_clearScreen(BLACK);
   
     sprintf(msg, "WHOAMI output: %d", get_expander(WHO_AM_I)); //0b01101001
     draw_string(msg, 20, 20, RED, BLACK); //register returns 105
     
-//    while(1) {
-//        
-//    }// end infinite while
+    while(1) {
+        i2c_read_multiple(SLAVE_ADDR, OUT_TEMP_L, data, arrlen);
+        
+        // parse read values
+        signed short temp = (data[1] << 8) | data[0]; //16-bit short
+        signed short gyroX = (data[3] << 8) | data[2];
+        signed short gyroY = (data[5] << 8) | data[4];
+        signed short gyroZ = (data[7] << 8) | data[6];
+        signed short accelX = (data[9] << 8) | data[8];
+        signed short accelY = (data[11] << 8) | data[10];
+        signed short accelZ = (data[13] << 8) | data[12];
+        
+        //scaling length and height
+        float xscale = accelX*0.000061*100; 
+        float yscale = accelY*0.000061*100;
+        
+        sprintf(msg, "x = %f", xscale);
+        draw_string(msg, 20, 100, RED, BLACK);
+        sprintf(msg, "y = %f", yscale);
+        draw_string(msg, 20, 110, RED, BLACK);
+        
+        draw_bar(50, 50, 40, 5, BLUE, WHITE, xscale); //xbar
+        
+        //5Hz loop
+        _CP0_SET_COUNT(0);
+        while (_CP0_GET_COUNT() < 48000000/2/5){
+            ;
+        }
+        
+    }// end infinite while
     
 }// end main
