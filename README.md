@@ -34,3 +34,6 @@ Current design in Eagle<br>
 
 #### HW7:<br>
 * LCD progress bar display of accelerometer xy readings from an LSM6DS33 chip
+
+#### HW8:<br>
+* Replica of HW7 using Harmony
