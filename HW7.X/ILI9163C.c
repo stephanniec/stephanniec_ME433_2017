@@ -225,42 +225,74 @@ void draw_string(char* msg, unsigned short x, unsigned short y, unsigned short c
     }
 }
 
-void draw_bar(unsigned short x0, unsigned short y0, unsigned short length, unsigned short height, unsigned short color1, unsigned short color2, float xscale, float yscale){
-    int i,j,xfill,yfill,xstep,ystep;
+void draw_xbar(unsigned short x0, unsigned short y0, unsigned short length, unsigned short height, unsigned short color1, unsigned short color2, float xscale){
+    int i,j,xfill,xstep;
     unsigned short x_move,y_move,x,y; // pixel coordinates
     unsigned short l_max, h_max; // absolute value of length and height
     
     //Finding absolute dimensions of both bars
     x_move = (length >= 0)? 1:-1; //set x_move = sign(length)*1 
-    y_move = (length >= 0)? 1:-1; //set y_move = sign(height)*1 
-    l_max = x_move*length+1; //abs(length)
-    h_max = y_move*height+1; //abs(height)
+    y_move = (height >= 0)? 1:-1; //set y_move = sign(height)*1 
+    l_max = x_move*length; //abs(length)
+    h_max = y_move*height; //abs(height)
     
     xstep = (xscale >= 0)? 1:-1;
-    ystep = (yscale >= 0)? 1:-1;
     xfill = (int)(0.01*xstep*xscale*l_max); //positive % of l_max
-    yfill = (int)(0.01*ystep*yscale*h_max); //positive % of h_max
+    if(xfill>l_max){
+        xfill = l_max; //Capping value if xscale over +-100%
+    }
     
     //x bar
     for(i=0;i<xfill;i++){
-        x = x0 + i*xstep;
+        x = x0 + xstep*i;
         for(j=0;j<h_max;j++){
-            y = y0+j*y_move;
+            y = y0+y_move*j;
             LCD_drawPixel(x,y,color1); // Fill bar with desired color
         }
     }
     
     for(i=xfill;i<l_max;i++){
-        x = x0 + i*xstep;
+        x = x0 + xstep*i;
         for(j=0;j<h_max;j++){
-            y = y0+j*y_move;
+            y = y0+y_move*j;
             LCD_drawPixel(x,y,color2); // Fill bar with bg color
         }
     }
-        
+    
+}
+
+void draw_ybar(unsigned short x0, unsigned short y0, unsigned short length, unsigned short height, unsigned short color1, unsigned short color2, float yscale){
+    int i,j,yfill,ystep;
+    unsigned short x_move,y_move,x,y; // pixel coordinates
+    unsigned short l_max, h_max; // absolute value of length and height
+    
+    //Finding absolute dimensions of both bars
+    x_move = (length >= 0)? 1:-1; //set x_move = sign(length)*1 
+    y_move = (height >= 0)? 1:-1; //set y_move = sign(height)*1 
+    l_max = x_move*length; //abs(length)
+    h_max = y_move*height; //abs(height)
+    
+    ystep = (yscale >= 0)? 1:-1;
+    yfill = (int)(0.01*ystep*yscale*h_max); //positive % of h_max
+    if (yfill>h_max){
+        yfill = h_max;  //Capping value if yscale over +-100%
+    }
+    
     //y bar
     for(i=0;i<yfill;i++){
-        
+        y = y0 + ystep*i;
+        for(j=0;j<l_max;j++){
+            x = x0+j*x_move;
+            LCD_drawPixel(x,y,color1); // Fill bar with desired color
+        }
+    }
+    
+    for(i=yfill;i<h_max;i++){
+        y = y0 + ystep*i;
+        for(j=0;j<l_max;j++){
+            x = x0+x_move*j;
+            LCD_drawPixel(x,y,color2); // Fill bar with bg color
+        }
     }
     
 }

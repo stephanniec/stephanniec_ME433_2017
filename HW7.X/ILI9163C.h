@@ -181,5 +181,6 @@ void draw_byte(unsigned int, unsigned short, unsigned short, unsigned short, uns
 void draw_char(char, unsigned short, unsigned short, unsigned short, unsigned short);
 void draw_string(char*, unsigned short, unsigned short, unsigned short, unsigned short);
 
-void draw_bar(unsigned short, unsigned short, unsigned short, unsigned short, unsigned short, unsigned short, float, float);
+void draw_xbar(unsigned short, unsigned short, unsigned short, unsigned short, unsigned short, unsigned short, float);
+void draw_ybar(unsigned short, unsigned short, unsigned short, unsigned short, unsigned short, unsigned short, float);
 #endif
