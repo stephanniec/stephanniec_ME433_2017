@@ -182,7 +182,7 @@ void APP_Tasks ( void )
             LCD_clearScreen(BLACK);
 
             sprintf(msg, "WHOAMI output: %d", get_expander(WHO_AM_I)); //0b01101001
-            //draw_string(msg, 20, 20, RED, BLACK); //register returns 105
+            draw_string(msg, 20, 10, RED, BLACK); //register returns 105
 
             while(1) {
                 i2c_read_multiple(SLAVE_ADDR, OUT_TEMP_L, data, arrlen);
@@ -205,15 +205,15 @@ void APP_Tasks ( void )
                 sprintf(msg, "y = %f", yscale);
                 //draw_string(msg, 20, 110, RED, BLACK);
 
-                draw_xbar(64, 64, 50, 5, GREEN, BLACK, xscale); //xbar
-                draw_ybar(64, 64, 5, 50, GREEN, BLACK, yscale); //ybar
+                draw_xbar(64, 64, 50, 5, MAGENTA, BLACK, xscale); //xbar
+                draw_ybar(64, 64, 5, 50, MAGENTA, BLACK, yscale); //ybar
 
                 int i,j,xbox,ybox;
                 for(i=0;i<5;i++){
                     xbox = 64+i;
                     for(j=0;j<5;j++){
                         ybox = 64+j;
-                        LCD_drawPixel(xbox,ybox,RED);
+                        LCD_drawPixel(xbox,ybox,WHITE);
                     }
                 }
 
