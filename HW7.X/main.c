@@ -92,15 +92,15 @@ int main() {
         sprintf(msg, "y = %f", yscale);
         //draw_string(msg, 20, 110, RED, BLACK);
         
-        draw_xbar(64, 64, 50, 5, BLUE, BLACK, xscale); //xbar
-        draw_ybar(64, 64, 5, 50, BLUE, BLACK, yscale); //ybar
+        draw_xbar(64, 64, 50, 5, GREEN, BLACK, xscale); //xbar
+        draw_ybar(64, 64, 5, 50, GREEN, BLACK, yscale); //ybar
         
         int i,j,xbox,ybox;
         for(i=0;i<5;i++){
             xbox = 64+i;
             for(j=0;j<5;j++){
                 ybox = 64+j;
-                LCD_drawPixel(xbox,ybox,YELLOW);
+                LCD_drawPixel(xbox,ybox,RED);
             }
         }
         

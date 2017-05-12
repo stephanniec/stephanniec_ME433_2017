@@ -31,3 +31,6 @@ Current design in Eagle<br>
 #### HW6:<br>
 * TFT LCD display using SPI communication
 * Code prints the image of a hedgehog and "Hello World!" to the screen, draws a progress bar which fills as a counter increases from 0-100, and outputs a live reading of the frames per second rate
+
+#### HW7:<br>
+* LCD progress bar display of accelerometer xy readings from an LSM6DS33 chip
