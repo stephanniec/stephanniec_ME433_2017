@@ -92,7 +92,7 @@ int main() {
         sprintf(msg, "y = %f", yscale);
         draw_string(msg, 20, 110, RED, BLACK);
         
-        draw_bar(50, 50, 40, 5, BLUE, WHITE, xscale); //xbar
+        draw_bar(60, 50, 50, 5, BLUE, WHITE, xscale, yscale); //xbar
         
         //5Hz loop
         _CP0_SET_COUNT(0);
