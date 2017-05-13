@@ -10,6 +10,7 @@
 #define WHO_AM_I   0x0F
 #define OUT_TEMP_L 0x20
 #define OUTX_L_XL  0x28
+#define ARRLEN 14
 
 void i2c_master_setup(void);              // set up I2C 1 as a master, at 100 kHz
 

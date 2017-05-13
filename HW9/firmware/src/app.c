@@ -65,8 +65,9 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 
 uint8_t APP_MAKE_BUFFER_DMA_READY dataOut[APP_READ_BUFFER_SIZE];
 uint8_t APP_MAKE_BUFFER_DMA_READY readBuffer[APP_READ_BUFFER_SIZE];
-int len, i = 0;
+int len, i = 0, write_flag = 0;
 int startTime = 0;
+unsigned char data[ARRLEN];
 
 // *****************************************************************************
 /* Application Data
@@ -306,6 +307,11 @@ bool APP_StateReset(void) {
  */
 
 void APP_Initialize(void) {
+    SPI1_init(); // Talk to LCD
+    LCD_init();
+    i2c_master_setup(); // Talk to IMU
+    init_expander(); // Turn on accelerometer
+    
     /* Place the App state machine in its initial state. */
     appData.state = APP_STATE_INIT;
 
@@ -430,25 +436,60 @@ void APP_Tasks(void) {
             if (APP_StateReset()) {
                 break;
             }
-
+                    
             /* Setup the write */
+            i2c_read_multiple(SLAVE_ADDR, OUT_TEMP_L, data, ARRLEN);
 
+            // parse read values
+            signed short temp = (data[1] << 8) | data[0]; //16-bit short
+            signed short gyroX = (data[3] << 8) | data[2];
+            signed short gyroY = (data[5] << 8) | data[4];
+            signed short gyroZ = (data[7] << 8) | data[6];
+            signed short accelX = (data[9] << 8) | data[8];
+            signed short accelY = (data[11] << 8) | data[10];
+            signed short accelZ = (data[13] << 8) | data[12];
+
+            //scaling length and height
+            float xscale = accelX*0.000061*100; 
+            float yscale = accelY*0.000061*100;
+                       
             appData.writeTransferHandle = USB_DEVICE_CDC_TRANSFER_HANDLE_INVALID;
             appData.isWriteComplete = false;
             appData.state = APP_STATE_WAIT_FOR_WRITE_COMPLETE;
 
-            len = sprintf(dataOut, "%d\r\n", i);
-            i++;
+            len = sprintf(dataOut, "Index:%3d\t ax:%3d\t ay:%3d\t az:%3d\t gx:%3d\t gy:%3d\t gz:%3d\r\n",\
+                    i, accelX, accelY, accelZ, gyroX, gyroY, gyroZ);
+            i++; //i = 1
             if (appData.isReadComplete) {
                 USB_DEVICE_CDC_Write(USB_DEVICE_CDC_INDEX_0,
                         &appData.writeTransferHandle,
                         appData.readBuffer, 1,
                         USB_DEVICE_CDC_TRANSFER_FLAGS_DATA_COMPLETE);
+                if (appData.readBuffer[0] == 'r'){ //r means let's write stuff
+                    write_flag = 1;
+                    i = 0; //Reset i 
+                }
             } else {
-                USB_DEVICE_CDC_Write(USB_DEVICE_CDC_INDEX_0,
-                        &appData.writeTransferHandle, dataOut, len,
-                        USB_DEVICE_CDC_TRANSFER_FLAGS_DATA_COMPLETE);
+                if(write_flag == 1){ //When not reading, write data to screen
+                    USB_DEVICE_CDC_Write(USB_DEVICE_CDC_INDEX_0,
+                    &appData.writeTransferHandle, dataOut, len,
+                    USB_DEVICE_CDC_TRANSFER_FLAGS_DATA_COMPLETE); //Like UART
+                    
+                    if(i==100){//Only reset if 100 counted
+                        write_flag = 0; 
+                        i = 0;
+                    }
+                }
+                else{
+                    len = 1;
+                    dataOut[0] = 0; //Sending blank packet
+                    USB_DEVICE_CDC_Write(USB_DEVICE_CDC_INDEX_0,
+                    &appData.writeTransferHandle, dataOut, len,
+                    USB_DEVICE_CDC_TRANSFER_FLAGS_DATA_COMPLETE);
+                }
+
                 startTime = _CP0_GET_COUNT();
+                
             }
             break;
 
