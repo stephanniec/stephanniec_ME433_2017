@@ -14,11 +14,9 @@ This repository contains scripts for various mechatronics projects completed for
 * pic32mx250f128b PCB schematic
 
 #### HW3:<br>
+![Board](https://github.com/stephanniec/stephanniec_ME433_2017/blob/master/imgs/pcb.png)
 * PCB .brd Eagle file
 * Compressed PCB Gerber files
-
-Current design in Eagle<br>
-![Board](https://github.com/stephanniec/stephanniec_ME433_2017/blob/master/imgs/pcb.png)
 
 #### HW4:<br>
 * SPI communication with an MCP4902 DAC chip
