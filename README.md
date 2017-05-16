@@ -37,3 +37,6 @@ Current design in Eagle<br>
 
 #### HW8:<br>
 * Replica of HW7 using Harmony
+
+#### HW12:<br>
+* Basic slider bar Android application written in JAVA
