@@ -68,6 +68,8 @@ uint8_t APP_MAKE_BUFFER_DMA_READY readBuffer[APP_READ_BUFFER_SIZE];
 int len, i = 0, write_flag = 0;
 int startTime = 0;
 unsigned char data[ARRLEN];
+signed short temp, gyroX, gyroY, gyroZ, accelX, accelY, accelZ;
+
 
 // *****************************************************************************
 /* Application Data
@@ -441,24 +443,29 @@ void APP_Tasks(void) {
             i2c_read_multiple(SLAVE_ADDR, OUT_TEMP_L, data, ARRLEN);
 
             // parse read values
-            signed short temp = (data[1] << 8) | data[0]; //16-bit short
-            signed short gyroX = (data[3] << 8) | data[2];
-            signed short gyroY = (data[5] << 8) | data[4];
-            signed short gyroZ = (data[7] << 8) | data[6];
-            signed short accelX = (data[9] << 8) | data[8];
-            signed short accelY = (data[11] << 8) | data[10];
-            signed short accelZ = (data[13] << 8) | data[12];
-
-            //scaling length and height
-            float xscale = accelX*0.000061*100; 
-            float yscale = accelY*0.000061*100;
-                       
+//            signed short temp = (data[1] << 8) | data[0]; //16-bit short
+//            signed short gyroX = (data[3] << 8) | data[2];
+//            signed short gyroY = (data[5] << 8) | data[4];
+//            signed short gyroZ = (data[7] << 8) | data[6];
+//            signed short accelX = (data[9] << 8) | data[8];
+//            signed short accelY = (data[11] << 8) | data[10];
+//            signed short accelZ = (data[13] << 8) | data[12];
+            
+            temp = (data[1] << 8) | data[0]; //16-bit short
+            gyroX = (data[3] << 8) | data[2];
+            gyroY = (data[5] << 8) | data[4];
+            gyroZ = (data[7] << 8) | data[6];
+            accelX = (data[9] << 8) | data[8];
+            accelY = (data[11] << 8) | data[10];
+            accelZ = (data[13] << 8) | data[12];
+            
             appData.writeTransferHandle = USB_DEVICE_CDC_TRANSFER_HANDLE_INVALID;
             appData.isWriteComplete = false;
             appData.state = APP_STATE_WAIT_FOR_WRITE_COMPLETE;
 
-            len = sprintf(dataOut, "Index:%3d\t ax:%3d\t ay:%3d\t az:%3d\t gx:%3d\t gy:%3d\t gz:%3d\r\n",\
-                    i, accelX, accelY, accelZ, gyroX, gyroY, gyroZ);
+            len = sprintf(dataOut, "Index:%d,\tax:%5.2f,\tay:%5.2f,\taz:%5.2f,\tgx:%5.2f,\tgy:%5.2f,\tgz:%5.2f\r\n", i, accelX*0.00061, accelY*0.00061, accelZ*0.00061, gyroX*0.035, gyroY*0.035, gyroZ*0.035);
+            //len = sprintf(dataOut, "Index:%d\t \r\n", i);
+            
             i++; //i = 1
             if (appData.isReadComplete) {
                 USB_DEVICE_CDC_Write(USB_DEVICE_CDC_INDEX_0,
@@ -475,7 +482,7 @@ void APP_Tasks(void) {
                     &appData.writeTransferHandle, dataOut, len,
                     USB_DEVICE_CDC_TRANSFER_FLAGS_DATA_COMPLETE); //Like UART
                     
-                    if(i==100){//Only reset if 100 counted
+                    if(i==101){//Only reset if 100 counted
                         write_flag = 0; 
                         i = 0;
                     }
