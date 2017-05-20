@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="3"><dataSet config="main"><source path="/home/stephanie/nuclass/sp17/stephanniec_ME433_2017/HW13_Opencv/ColorID_opencv/libraries/opencv/src/main/jniLibs"/></dataSet><dataSet config="release"><source path="/home/stephanie/nuclass/sp17/stephanniec_ME433_2017/HW13_Opencv/ColorID_opencv/libraries/opencv/src/release/jniLibs"/></dataSet></merger>
