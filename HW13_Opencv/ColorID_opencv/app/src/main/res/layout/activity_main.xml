@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="horizontal"
     tools:context="com.example.stephanie.colorid_opencv.MainActivity">
 
     <org.opencv.android.JavaCameraView
@@ -11,4 +12,20 @@
         android:layout_height="fill_parent"
         android:id="@+id/colorid_opencv_surface_view"/>
 
-</android.support.constraint.ConstraintLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="X: 0, Y: 0"
+        android:textColor="#079fba"
+        android:id="@+id/touch_coordinates"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/touch_coordinates"
+        android:text="Color Detected: "
+        android:textColor="#079fba"
+        android:id="@+id/touch_color"/>
+
+
+</RelativeLayout>
