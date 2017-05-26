@@ -36,6 +36,18 @@ This repository contains scripts for various mechatronics projects completed for
 #### HW8:<br>
 * Replica of HW7 using Harmony
 
+#### HW9:<br>
+* Accelerometer data display using PIC-USB communication 
+
 #### HW12:<br>
 ![Slider](https://github.com/stephanniec/stephanniec_ME433_2017/blob/master/imgs/android.png)
 * Basic slider bar Android application written in JAVA
+
+#### HW13:<br>
+* Color identification Android application written in JAVA
+
+#### HW15:<br>
+* CAD designs of a wheel and a box with a living hinge built in OnShape
+
+#### HW16:<br>
+* Assembled 3D printed wheel prototypes
