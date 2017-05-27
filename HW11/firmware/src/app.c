@@ -61,8 +61,10 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 // Section: Global Data Definitions
 // *****************************************************************************
 // *****************************************************************************
-unsigned char data[ARRLEN];
+//unsigned char data[ARRLEN];
+unsigned char data[14];
 signed short accelX, accelY;
+unsigned short inc = 0;
 
 // *****************************************************************************
 /* Application Data
@@ -93,7 +95,7 @@ MOUSE_REPORT mouseReportPrevious APP_MAKE_BUFFER_DMA_READY;
 // *****************************************************************************
 
 void APP_USBDeviceHIDEventHandler(USB_DEVICE_HID_INDEX hidInstance,
-        USB_DEVICE_HID_EVENT event, void * eventData, uintptr_t userData) {
+    USB_DEVICE_HID_EVENT event, void * eventData, uintptr_t userData) {
     APP_DATA * appData = (APP_DATA *) userData;
 
     switch (event) {
@@ -263,13 +265,19 @@ void APP_USBDeviceEventHandler(USB_DEVICE_EVENT event, void * eventData, uintptr
  */
 
 void APP_Initialize(void) {
-    /* Place the App state machine in its initial state. */
+    /* Place the App state machine in its initial state. */  
     appData.state = APP_STATE_INIT;
     appData.deviceHandle = USB_DEVICE_HANDLE_INVALID;
     appData.isConfigured = false;
     //appData.emulateMouse = true;
     appData.hidInstance = 0;
     appData.isMouseReportSendBusy = false;
+    
+    i2c_master_setup(); //Start I2C communication with IMU
+    init_expander(); //Turn on accelerometer
+    
+    TRISAbits.TRISA4 = 0;
+    LATAbits.LATA4 = 0;
 }
 
 /******************************************************************************
@@ -281,10 +289,8 @@ void APP_Initialize(void) {
  */
 
 void APP_Tasks(void) {
-    //static int8_t vector = 0;
-    static uint8_t inc = 0;
-    //int8_t dir_table[] = {-4, -4, -4, 0, 4, 4, 4, 0};
-
+    //static uint8_t inc = 0;
+    
     /* Check the application's current state. */
     switch (appData.state) {
             /* Application's initial state. */
@@ -320,6 +326,7 @@ void APP_Tasks(void) {
         
             
         case APP_STATE_MOUSE_EMULATE:
+            LATAbits.LATA4 = 1;
             
             // every 10th cycle, xy values non-zero
             if (inc == 10) {
@@ -329,8 +336,8 @@ void APP_Tasks(void) {
 
                 appData.mouseButton[0] = MOUSE_BUTTON_STATE_RELEASED;
                 appData.mouseButton[1] = MOUSE_BUTTON_STATE_RELEASED;
-                appData.xCoordinate = (int8_t) 1.0*accelX*0.00061; //ax from IMU 
-                appData.yCoordinate = (int8_t) 1.0*accelY*0.00061; //ay from IMU
+                appData.xCoordinate = (int8_t) 5.0*accelX*0.00061; //ax from IMU 
+                appData.yCoordinate = (int8_t) 5.0*accelY*0.00061; //ay from IMU
                 inc = 0;
             }
 
@@ -340,6 +347,7 @@ void APP_Tasks(void) {
                 appData.xCoordinate = (int8_t) 0; 
                 appData.yCoordinate = (int8_t) 0; 
             }
+            inc++;
             
             if (!appData.isMouseReportSendBusy) {
                 /* This means we can send the mouse report. The
@@ -391,7 +399,7 @@ void APP_Tasks(void) {
                             sizeof (MOUSE_REPORT));
                     appData.setIdleTimer = 0;
                 }
-                inc++;
+                
             }
 
             break;
