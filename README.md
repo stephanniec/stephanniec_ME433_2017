@@ -37,7 +37,11 @@ This repository contains scripts for various mechatronics projects completed for
 * Replica of HW7 using Harmony
 
 #### HW9:<br>
-* Accelerometer data display using PIC-USB communication 
+* Accelerometer data display using PIC-USB communication
+
+#### HW11:<br>
+* IMU mouse prototype
+* Controls the trajectory of a cursor via PIC-USB communication
 
 #### HW12:<br>
 ![Slider](https://github.com/stephanniec/stephanniec_ME433_2017/blob/master/imgs/android.png)
@@ -47,7 +51,10 @@ This repository contains scripts for various mechatronics projects completed for
 * Color identification Android application written in JAVA
 
 #### HW15:<br>
+![Wheel1](https://github.com/stephanniec/stephanniec_ME433_2017/blob/master/imgs/wheel1_small.png)
+![Wheel2](https://github.com/stephanniec/stephanniec_ME433_2017/blob/master/imgs/wheel2_small.png)
 * CAD designs of a wheel and a box with a living hinge built in OnShape
 
 #### HW16:<br>
+![Slider](https://github.com/stephanniec/stephanniec_ME433_2017/blob/master/imgs/3dwheel_small.png)
 * Assembled 3D printed wheel prototypes
