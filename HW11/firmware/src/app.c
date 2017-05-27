@@ -336,8 +336,8 @@ void APP_Tasks(void) {
 
                 appData.mouseButton[0] = MOUSE_BUTTON_STATE_RELEASED;
                 appData.mouseButton[1] = MOUSE_BUTTON_STATE_RELEASED;
-                appData.xCoordinate = (int8_t) 5.0*accelX*0.00061; //ax from IMU 
-                appData.yCoordinate = (int8_t) 5.0*accelY*0.00061; //ay from IMU
+                appData.xCoordinate = (int8_t) 0.1*accelX*0.00061; //ax from IMU 
+                appData.yCoordinate = (int8_t) 0.1*accelY*0.00061; //ay from IMU
                 inc = 0;
             }
 
