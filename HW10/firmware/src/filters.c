@@ -27,7 +27,7 @@ float MAF(float* buff){
 }
 
 float FIR(float* w, float* buff){
-    int tmp = w[0];
+    float tmp = w[0];
     int i;
     
     for (i = 0; i<BUFFLEN; i++){
