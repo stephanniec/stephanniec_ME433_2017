@@ -59,6 +59,8 @@ This repository contains scripts for various mechatronics projects completed for
 #### HW15:<br>
 ![Wheel1](https://github.com/stephanniec/stephanniec_ME433_2017/blob/master/imgs/wheel1_small.png)
 ![Wheel2](https://github.com/stephanniec/stephanniec_ME433_2017/blob/master/imgs/wheel2_small.png)
+![BoxWalls](https://github.com/stephanniec/stephanniec_ME433_2017/blob/master/imgs/box_walls_small.png)
+![Assemble](https://github.com/stephanniec/stephanniec_ME433_2017/blob/master/imgs/box_assembly_small.png)
 * CAD designs of a wheel and a box with a living hinge built in OnShape
 
 #### HW16:<br>
