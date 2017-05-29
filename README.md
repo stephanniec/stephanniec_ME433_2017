@@ -56,6 +56,13 @@ This repository contains scripts for various mechatronics projects completed for
 #### HW13:<br>
 * Color identification Android application written in JAVA
 
+#### HW14:<br>
+![PICTalk](https://github.com/stephanniec/stephanniec_ME433_2017/blob/master/imgs/android_pic.png)
+* Android phone and PIC microcontroller communication
+* Phone sends the position of a slider bar to the chip
+* Chip continuously streams increasing integer values
+* When an input from the phone is received, the PIC will return the slider position as it outputs numbers
+
 #### HW15:<br>
 ![Wheel1](https://github.com/stephanniec/stephanniec_ME433_2017/blob/master/imgs/wheel1_small.png)
 ![Wheel2](https://github.com/stephanniec/stephanniec_ME433_2017/blob/master/imgs/wheel2_small.png)
