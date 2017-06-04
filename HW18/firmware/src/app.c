@@ -66,8 +66,8 @@ int startTime = 0;
 char rx[64]; // the raw data
 int rxPos = 0; // how much data has been stored
 int gotRx = 0; // the flag
-int rxValL = 0; // a place to store the int that was received
-int rxValR = 0;
+int rxValL = 0, rxValR = 0; // a place to store the int that was received
+int wheelLrot = 1, wheelRrot = 1; // default direction is forward
 // *****************************************************************************
 /* Application Data
   Summary:
@@ -419,7 +419,7 @@ void APP_Tasks(void) {
                     // if you got a newline
                     if (appData.readBuffer[ii] == '\n' || appData.readBuffer[ii] == '\r') {
                         rx[rxPos] = 0; // end the array
-                        sscanf(rx, "%d %d", &rxValL, &rxValR); // get the int out of the array
+                        sscanf(rx, "%d %d %d %d", &rxValL, &rxValR, &wheelLrot, &wheelRrot); // get the int out of the array
                         gotRx = 1; // set the flag
                         break; // get out of the while loop
                     } else if (appData.readBuffer[ii] == 0) {
@@ -485,9 +485,9 @@ void APP_Tasks(void) {
                 
                 // somewhere in APP_Tasks(), probably in case APP_STATE_SCHEDULE_READ
                 // when you read data from the host
-                LATAbits.LATA1 = 1; // direction
+                LATAbits.LATA1 = wheelLrot; // direction
                 OC1RS = (int) pwmL; // velocity, 50%
-                LATBbits.LATB3 = 0; // direction
+                LATBbits.LATB3 = wheelRrot; // direction
                 OC4RS = (int) pwmR; // velocity, 50%
                 
                 i++;

@@ -9,9 +9,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.hoho.android.usbserial.driver.CdcAcmSerialDriver;
@@ -29,18 +31,23 @@ import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity {
 
-    SeekBar myControl;
+    SeekBar myControlLeft;
+    SeekBar myControlRight;
     TextView myTextView;
+    TextView myTextView4;
 
     Button button;
-    TextView myTextView2;
+    TextView myTextView2; // Grey text under button
     ScrollView myScrollView;
-    TextView myTextView3;
+    TextView myTextView3; // Text in green box
 
     private UsbManager manager;
     private UsbSerialPort sPort;
     private final ExecutorService mExecutor = Executors.newSingleThreadExecutor();
     private SerialInputOutputManager mSerialIoManager;
+
+    public int left_wheel_rot = 0;
+    public int right_wheel_rot = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,42 +55,102 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        myControl = (SeekBar) findViewById(R.id.seek1);
+        myControlLeft = (SeekBar) findViewById(R.id.seek1);
+        myControlRight = (SeekBar) findViewById(R.id.seek2);
 
-        myTextView = (TextView) findViewById(R.id.textView01);
-        myTextView.setText("Enter whatever you like!");
+        myTextView = (TextView) findViewById(R.id.textView01); // First slider value
+        myTextView.setText("Left Wheel Value");
+        myTextView4 = (TextView) findViewById(R.id.textView04); // Second slider value
+        myTextView4.setText("Right Wheel Value");
 
-        myTextView2 = (TextView) findViewById(R.id.textView02);
+        myTextView2 = (TextView) findViewById(R.id.textView02); // Grey text under button
         myScrollView = (ScrollView) findViewById(R.id.ScrollView01);
-        myTextView3 = (TextView) findViewById(R.id.textView03);
+        myTextView3 = (TextView) findViewById(R.id.textView03); // Text in green box
         button = (Button) findViewById(R.id.button1);
+        Switch switch_button1 = (Switch) findViewById(R.id.switch_button1);
+        Switch switch_button2 = (Switch) findViewById(R.id.switch_button2);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                myTextView2.setText("value on click is "+myControl.getProgress());
+                myTextView2.setText("L and R PWM percent on click is "+myControlLeft.getProgress()+ " and " + myControlRight.getProgress());
 
-                String sendString = String.valueOf(myControl.getProgress()) + " " + String.valueOf(myControl.getProgress()) + '\n';
+                String sendString = String.valueOf(myControlLeft.getProgress()) + " " + String.valueOf(myControlRight.getProgress()) + " " + String.valueOf(left_wheel_rot) + " " + String.valueOf(right_wheel_rot) + '\n';
                 try {
                     sPort.write(sendString.getBytes(), 10); // 10 is the timeout
                 } catch (IOException e) { }
             }
         });
 
-        setMyControlListener();
+        switch_button1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked){
+                if(isChecked){
+                    //Spin forward
+                    left_wheel_rot = 1;
+                }
+
+                else {
+                    //Spin backward
+                    left_wheel_rot = 0;
+                }
+            }
+
+        });
+
+        switch_button2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked){
+                if(isChecked){
+                    //Spin forward
+                    right_wheel_rot = 1;
+                }
+
+                else {
+                    //Spin backward
+                    right_wheel_rot = 0;
+                }
+            }
+
+        });
+
+        setMyControlListenerLeft();
+        setMyControlListenerRight();
 
         manager = (UsbManager) getSystemService(Context.USB_SERVICE);
     }
 
-    private void setMyControlListener() {
-        myControl.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+    private void setMyControlListenerLeft() {
+        myControlLeft.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
-            int progressChanged = 0;
+            int progressChangedL = 0;
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                progressChanged = progress;
+                progressChangedL = progress;
                 myTextView.setText("The value is: "+progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+    }
+
+    private void setMyControlListenerRight() {
+        myControlRight.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+
+            int progressChangedR = 0;
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                progressChangedR = progress;
+                myTextView4.setText("The value is: "+progress);
             }
 
             @Override
