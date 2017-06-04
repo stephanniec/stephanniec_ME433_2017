@@ -66,8 +66,8 @@ int startTime = 0;
 char rx[64]; // the raw data
 int rxPos = 0; // how much data has been stored
 int gotRx = 0; // the flag
-int rxVal = 0; // a place to store the int that was received
-
+int rxValL = 0; // a place to store the int that was received
+int rxValR = 0;
 // *****************************************************************************
 /* Application Data
   Summary:
@@ -301,7 +301,7 @@ bool APP_StateReset(void) {
     See prototype in app.h.
  */
 
-void APP_Initialize(void) {
+void APP_Initialize(void) {  
     /* Place the App state machine in its initial state. */
     appData.state = APP_STATE_INIT;
 
@@ -336,6 +336,29 @@ void APP_Initialize(void) {
     /* Set up the read buffer */
     appData.readBuffer = &readBuffer[0];
 
+    // put these initializations in APP_Initialize()
+    RPA0Rbits.RPA0R = 0b0101; // A0 is OC1
+    TRISAbits.TRISA1 = 0;
+    LATAbits.LATA1 = 0; // A1 is the direction pin to go along with OC1
+
+    RPB2Rbits.RPB2R = 0b0101; // B2 is OC4
+    TRISBbits.TRISB3 = 0;
+    LATBbits.LATB3 = 0; // B3 is the direction pin to go along with OC4
+    
+    // also put these in APP_Initialize()
+    T2CONbits.TCKPS = 2; // prescaler N=4 
+    PR2 = 1200 - 1; // 10kHz
+    TMR2 = 0;
+    OC1CONbits.OCM = 0b110; // PWM mode without fault pin; other OC1CON bits are defaults
+    OC4CONbits.OCM = 0b110;
+    OC1RS = 0; // max allowed value is 1119
+    OC1R = 0; // read-only initial value
+    OC4RS = 0; // max allowed value is 1119
+    OC4R = 0; // read-only initial value
+    T2CONbits.ON = 1;
+    OC1CONbits.ON = 1;
+    OC4CONbits.ON = 1;
+    
     startTime = _CP0_GET_COUNT();
 }
 
@@ -349,7 +372,8 @@ void APP_Initialize(void) {
 void APP_Tasks(void) {
     /* Update the application state machine based
      * on the current state */
-
+    
+    float pwmL, pwmR;
     switch (appData.state) {
         case APP_STATE_INIT:
 
@@ -395,7 +419,7 @@ void APP_Tasks(void) {
                     // if you got a newline
                     if (appData.readBuffer[ii] == '\n' || appData.readBuffer[ii] == '\r') {
                         rx[rxPos] = 0; // end the array
-                        sscanf(rx, "%d", &rxVal); // get the int out of the array
+                        sscanf(rx, "%d %d", &rxValL, &rxValR); // get the int out of the array
                         gotRx = 1; // set the flag
                         break; // get out of the while loop
                     } else if (appData.readBuffer[ii] == 0) {
@@ -441,7 +465,7 @@ void APP_Tasks(void) {
 
 
         case APP_STATE_SCHEDULE_WRITE:
-
+            
             if (APP_StateReset()) {
                 break;
             }
@@ -453,7 +477,19 @@ void APP_Tasks(void) {
             appData.state = APP_STATE_WAIT_FOR_WRITE_COMPLETE;
 
              if (gotRx) {
-                len = sprintf(dataOut, "got: %d\r\n", rxVal);
+                len = sprintf(dataOut, "L: %d R: %d\r\n", rxValL, rxValR);
+                
+                // scale by 1119 for PWM
+                pwmL = (rxValL/100.0)*1119;
+                pwmR = (rxValR/100.0)*1119;
+                
+                // somewhere in APP_Tasks(), probably in case APP_STATE_SCHEDULE_READ
+                // when you read data from the host
+                LATAbits.LATA1 = 1; // direction
+                OC1RS = (int) pwmL; // velocity, 50%
+                LATBbits.LATB3 = 0; // direction
+                OC4RS = (int) pwmR; // velocity, 50%
+                
                 i++;
                 USB_DEVICE_CDC_Write(USB_DEVICE_CDC_INDEX_0,
                         &appData.writeTransferHandle,
