@@ -39,11 +39,16 @@ public class MainActivity extends Activity implements TextureView.SurfaceTexture
     private TextView mTextView;
 
     private SeekBar myControl;
-    private TextView sliderInstructions; // different from mTextView
+    private SeekBar threshControl;
 
-    static long prevtime = 0; // for FPS calculation
+    private TextView sliderInstructions; // different from mTextView
+    private TextView sliderInstructions2;
 
     public static int sliderVal = 0;
+    public static int sliderVal2 = 0;
+
+    static long prevtime = 0; // for FPS calculation
+    public float COM = 0; // center of mass location
 
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -74,7 +79,12 @@ public class MainActivity extends Activity implements TextureView.SurfaceTexture
         myControl = (SeekBar) findViewById(R.id.seek1);
         sliderInstructions = (TextView) findViewById(R.id.textView01);
         sliderInstructions.setText("Move the slider to adjust the camera's sensitivity.");
+        threshControl = (SeekBar) findViewById(R.id.seek2);
+        sliderInstructions2 = (TextView) findViewById(R.id.textView02);
+        sliderInstructions2.setText("Move the slider to set grey ID value.");
+
         setMyControlListener();
+        setMyControlListener2();
     }
 
     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
@@ -127,6 +137,29 @@ public class MainActivity extends Activity implements TextureView.SurfaceTexture
         });
     }
 
+    private void setMyControlListener2() {
+        threshControl.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            int progressChanged = 0;
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar2, int progress2, boolean fromUser) {
+                progressChanged = progress2;
+                sliderInstructions2.setText("The grey threshold value is: "+progress2);
+                sliderVal2 = (100 - progress2);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar2){
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar2){
+
+            }
+        });
+    }
+
     // the important function
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
         // every time there is a new Camera preview frame
@@ -134,38 +167,57 @@ public class MainActivity extends Activity implements TextureView.SurfaceTexture
 
         final Canvas c = mSurfaceHolder.lockCanvas();
         if (c != null) {
-            int thresh = sliderVal; // comparison value
+            int sensativity = sliderVal; // comparison value
+            int greyThresh = sliderVal2;
             int[] pixels = new int[bmp.getWidth()]; // pixels[] is the RGBA data
             //int startY = 200; // which row in the bitmap to analyze to read
 
-            for (int startY = 0; startY < bmp.getHeight(); startY = startY + 5) {
+            for (int startY = 0; startY < bmp.getHeight(); startY += 10) {
                 bmp.getPixels(pixels, 0, bmp.getWidth(), 0, startY, bmp.getWidth(), 1);
 
-                // in the row, see if there is more green than red
+//                // in the row, see if there is more green than red
+//                for (int i = 0; i < bmp.getWidth(); i++) {
+//                    if ((green(pixels[i]) - red(pixels[i])) > thresh) {
+//                        pixels[i] = rgb(0, 255, 0); // over write the pixel with pure green
+//                    }
+//                }
+
+                int sum_mr = 0; // the sum of the mass times the radius
+                int sum_m = 0; // the sum of the masses
                 for (int i = 0; i < bmp.getWidth(); i++) {
-                    if ((green(pixels[i]) - red(pixels[i])) > thresh) {
-                        pixels[i] = rgb(0, 255, 0); // over write the pixel with pure green
+                    if (((green(pixels[i]) - red(pixels[i])) > -greyThresh)&&((green(pixels[i]) - red(pixels[i])) < greyThresh)&&(green(pixels[i]) > sensativity)) {
+                        pixels[i] = rgb(1, 1, 1); // set the pixel to almost 100% black
+
+                        sum_m = sum_m + green(pixels[i])+red(pixels[i])+blue(pixels[i]);
+                        sum_mr = sum_mr + (green(pixels[i])+red(pixels[i])+blue(pixels[i]))*i;
                     }
+                }
+                // only use the data if there were a few pixels identified, otherwise you might get a divide by 0 error
+                if(sum_m>5){
+                    COM = sum_mr / sum_m;
+                    // only draw a circle at some position if pixes identified
+                    canvas.drawCircle(COM, startY, 5, paint1); // x position = COM of row, y position, diameter, color
+                }
+                else{
+                    COM = 0;
                 }
 
                 // update the row
                 bmp.setPixels(pixels, 0, bmp.getWidth(), 0, startY, bmp.getWidth(), 1);
+
             }
         }
 
-        // draw a circle at some position
-        int pos = 50;
-        canvas.drawCircle(pos, 240, 5, paint1); // x position, y position, diameter, color
 
-        // write the pos as text
-        canvas.drawText("pos = " + pos, 10, 200, paint1);
+//        // write the pos as text
+//        canvas.drawText("pos = " + pos, 10, 200, paint1);
         c.drawBitmap(bmp, 0, 0, null);
         mSurfaceHolder.unlockCanvasAndPost(c);
 
         // calculate the FPS to see how fast the code is running
         long nowtime = System.currentTimeMillis();
         long diff = nowtime - prevtime;
-        mTextView.setText("FPS " + 1000 / diff);
+        mTextView.setText("FPS: " + 1000 / diff + " " + "Color Threshold: " + (100-sliderVal2));
         prevtime = nowtime;
     }
 
