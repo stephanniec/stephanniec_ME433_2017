@@ -485,9 +485,9 @@ void APP_Tasks(void) {
                 
                 // somewhere in APP_Tasks(), probably in case APP_STATE_SCHEDULE_READ
                 // when you read data from the host
-                LATAbits.LATA1 = wheelLrot; // direction
+                LATAbits.LATA1 = 1; // direction...always forward
                 OC1RS = (int) pwmL; // velocity, 50%
-                LATBbits.LATB3 = wheelRrot; // direction
+                LATBbits.LATB3 = 1; // direction...always forward
                 OC4RS = (int) pwmR; // velocity, 50%
                 
                 i++;
