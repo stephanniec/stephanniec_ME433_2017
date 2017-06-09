@@ -359,6 +359,17 @@ void APP_Initialize(void) {
     OC1CONbits.ON = 1;
     OC4CONbits.ON = 1;
     
+//    RPB14Rbits.RPB14R = 0b0101; // OC3 for servo control
+//    T3CONbits.TCKPS = 4;
+//    PR3 = 60000-1;
+//    TMR3 = 0;
+//    OC3CONbits.OCM = 0b110;
+//    OC3CONbits.OCTSEL = 1; // timer 3
+//    OC3RS = 2000;
+//    OC3R = 2000;
+//    T3CONbits.ON = 1;
+//    OC3CONbits.ON = 1;
+    
     startTime = _CP0_GET_COUNT();
 }
 
@@ -478,11 +489,25 @@ void APP_Tasks(void) {
 
              if (gotRx) {
                 len = sprintf(dataOut, "L: %d R: %d\r\n", rxValL, rxValR);
-                
+                               
                 // scale by 1119 for PWM
                 pwmL = (rxValL/100.0)*1119;
                 pwmR = (rxValR/100.0)*1119;
-                
+//                
+//                if (pwmL > 1119){
+//                    pwmL = 1119;  
+//                }
+//                if (pwmL < 0){
+//                    pwmL = 0;  
+//                }
+//                
+//                if (pwmR > 1119){
+//                    pwmR = 1119;
+//                }
+//                if (pwmR < 0){
+//                    pwmR = 0;  
+//                }
+                                               
                 // somewhere in APP_Tasks(), probably in case APP_STATE_SCHEDULE_READ
                 // when you read data from the host
                 LATAbits.LATA1 = 1; // direction...always forward
@@ -490,6 +515,15 @@ void APP_Tasks(void) {
                 LATBbits.LATB3 = 1; // direction...always forward
                 OC4RS = (int) pwmR; // velocity, 50%
                 
+//                OC3RS = servo;
+//                if (rxValR/100.0 > 70){
+//                    servo = 3025;
+//                    
+//                } 
+//                else {
+//                    servo = 2975;
+//                }
+                                        
                 i++;
                 USB_DEVICE_CDC_Write(USB_DEVICE_CDC_INDEX_0,
                         &appData.writeTransferHandle,

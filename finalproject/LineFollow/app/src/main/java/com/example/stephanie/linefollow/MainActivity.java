@@ -50,6 +50,10 @@ import static android.graphics.Color.rgb;
 
 public class MainActivity extends Activity implements TextureView.SurfaceTextureListener {
 
+    //############
+    //GLOBAL VAR
+    //############
+
     // Motor Control Variables
     SeekBar myControlLeft;
     SeekBar myControlRight;
@@ -66,8 +70,8 @@ public class MainActivity extends Activity implements TextureView.SurfaceTexture
     private final ExecutorService mExecutor = Executors.newSingleThreadExecutor();
     private SerialInputOutputManager mSerialIoManager;
 
-    public int left_wheel_rot = 0;
-    public int right_wheel_rot = 0;
+//    public int left_wheel_rot = 0;
+//    public int right_wheel_rot = 0;
 
     // Road ID Variables
     private Camera mCamera;
@@ -89,11 +93,11 @@ public class MainActivity extends Activity implements TextureView.SurfaceTexture
     public static int sliderVal2 = 0;
 
     static long prevtime = 0; // for FPS calculation
-    int l_vel = 76;
-    int r_vel = 48;
+    int l_vel = 64;
+    int r_vel = 50;
     float Kp = 0; // proportional control gain
     public float COM = 0; // center of mass location
-    public float COMbuff[] = new float[48];
+    public float COMbuff[] = new float[12];
     public float COMavg = 0;
 
     @Override
@@ -162,37 +166,37 @@ public class MainActivity extends Activity implements TextureView.SurfaceTexture
             }
         });
 
-        switch_button1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked){
-                if(isChecked){
-                    //Spin forward
-                    left_wheel_rot = 1;
-                }
-
-                else {
-                    //Spin backward
-                    left_wheel_rot = 0;
-                }
-            }
-
-        });
-
-        switch_button2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked){
-                if(isChecked){
-                    //Spin forward
-                    right_wheel_rot = 1;
-                }
-
-                else {
-                    //Spin backward
-                    right_wheel_rot = 0;
-                }
-            }
-
-        });
+//        switch_button1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+//            @Override
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked){
+//                if(isChecked){
+//                    //Spin forward
+//                    left_wheel_rot = 1;
+//                }
+//
+//                else {
+//                    //Spin backward
+//                    left_wheel_rot = 0;
+//                }
+//            }
+//
+//        });
+//
+//        switch_button2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+//            @Override
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked){
+//                if(isChecked){
+//                    //Spin forward
+//                    right_wheel_rot = 1;
+//                }
+//
+//                else {
+//                    //Spin backward
+//                    right_wheel_rot = 0;
+//                }
+//            }
+//
+//        });
 
         setMyControlListenerLeft();
         setMyControlListenerRight();
@@ -205,7 +209,7 @@ public class MainActivity extends Activity implements TextureView.SurfaceTexture
         Camera.Parameters parameters = mCamera.getParameters();
         parameters.setPreviewSize(640, 480);
         parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_INFINITY); // no autofocusing
-        parameters.setAutoExposureLock(true); // keep the white balance constant
+        parameters.setAutoExposureLock(false); // keep the white balance constant
         mCamera.setParameters(parameters);
         mCamera.setDisplayOrientation(90); // rotate to portrait mode
 
@@ -285,7 +289,7 @@ public class MainActivity extends Activity implements TextureView.SurfaceTexture
             int[] pixels = new int[bmp.getWidth()]; // pixels[] is the RGBA data
 
             int buff_ind = 0;
-            for (int startY = 0; startY < bmp.getHeight(); startY += 10) {
+            for (int startY = 360; startY < bmp.getHeight(); startY += 10) { // lines checked
                 bmp.getPixels(pixels, 0, bmp.getWidth(), 0, startY, bmp.getWidth(), 1);
 
                 int sum_mr = 0; // the sum of the mass times the radius
@@ -324,17 +328,25 @@ public class MainActivity extends Activity implements TextureView.SurfaceTexture
             COMavg = tmp/COMbuff.length;
 
             // only draw a circle at some position if pixes identified
-            canvas.drawCircle(COMavg, 240, 5, paint1); // x position = COM of row, y position, diameter, color
+            canvas.drawCircle(COMavg, 420, 5, paint1); // x position = COM of row, y position, diameter, color
 
-            // p control for velocity
-            Kp = (float) ((COMavg - 320.0)/320.0); // Positive if too far right, neg if too far left
+           if (COMavg < 150){ // If dot drifts too far left, stop left wheel
+                l_vel = 0;
+            }
+            else if (COMavg > 500) { // If dot drifts too far right, stop right wheel
+                r_vel = 0;
+            }
+            else {
+                // p control for velocity
+                Kp = (float) ((COMavg - 320.0) / 1000.0); // Positive if too far right, neg if too far left
 
-            // If too far right, ramp up l_vel and lower r_vel
-            l_vel = (int)((1+Kp)*76);
-            r_vel = (int)((1-Kp)*48);
+                // If too far right, ramp up l_vel and lower r_vel
+                l_vel = (int) ((1 + Kp) * 84);
+                r_vel = (int) ((1 - Kp) * 70);
+            }
 
             // send motor velocity based on COM avg
-            String sendString = String.valueOf(l_vel) + " " + String.valueOf(r_vel) + " " + String.valueOf(left_wheel_rot) + " " + String.valueOf(right_wheel_rot) + '\n';
+            String sendString = String.valueOf(l_vel) + " " + String.valueOf(r_vel) + " " + String.valueOf(1) + " " + String.valueOf(1) + '\n';
             try {
                 sPort.write(sendString.getBytes(), 10); // 10 is the timeout
             } catch (IOException e) { }
