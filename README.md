@@ -71,5 +71,30 @@ This repository contains scripts for various mechatronics projects completed for
 * CAD designs of a wheel and a box with a living hinge built in OnShape
 
 #### HW16: 3D Printing<br>
-![Slider](https://github.com/stephanniec/stephanniec_ME433_2017/blob/master/imgs/3dwheel_small.png)
+![wheels](https://github.com/stephanniec/stephanniec_ME433_2017/blob/master/imgs/3dwheel_small.png)
 * Assembled 3D printed wheel prototypes
+
+#### HW17: Laser Cutting<br>
+![box](https://github.com/stephanniec/stephanniec_ME433_2017/blob/master/imgs/living_hinge_box_small.png)
+* Assembled living hinge box
+
+#### HW18: Motor Control Application<br>
+* Created a JAVA android application which can individually set the speed and direction of two DC motors
+* PWM output is determined by the position of two slider bars
+* Wheel direction is determined by the position of two switches
+
+#### HW19: Path Center Identification<br>
+* Android application uses the rear camera scan the environment
+* The resulting Bitmap read is analyzed for areas where green meets red
+* A horizontal line is drawn where the android believes the path starts and ends
+* The center of mass of the line is denoted by a red dot
+
+#### HW20: Line-following Robot
+![robot](https://github.com/stephanniec/stephanniec_ME433_2017/blob/master/imgs/line_follow_robot.png)
+* Consolidated motor control and path detection code
+* Constructed a small vehicle to house the motors and circuitry
+* Implemented proportional control to moderate the speed of the wheels
+* Filtered the center of mass positions so only the average points of the Bitmap's last 120 rows are analyzed
+* Applied a threshold pixel range which halts one wheel of the robot if the COM point is lost
+
+Note: Servo motor code was commented out to let the car run at max speed without needing to divert power elsewhere
